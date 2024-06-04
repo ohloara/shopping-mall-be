@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const { response } = require("express");
 require("dotenv").config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
@@ -35,6 +36,18 @@ authController.authenticate = async (req, res, next)=>{
         next();
     }catch(error){
         res.status(400).json({status:"error", error:error.message});
+    }
+}
+
+authController.checkAdminPermission = async (req, res, next)=>{
+    try{
+        const {userId} = req;
+        const user = await User.findById(userId);
+        if(user.level !== "admin") throw new Error("no permission");
+        next();
+    }catch(error){
+        console.log(error);
+        res.status(400).json({status:"falil", error:error.message});
     }
 }
 
