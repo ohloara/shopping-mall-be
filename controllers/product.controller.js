@@ -13,4 +13,13 @@ productController.createProduct = async (req,res)=>{
     }
 }
 
+productController.getProducts = async(req, res)=>{
+    try{
+        const product = await Product.find({});
+        res.status(200).json({status:"sucess",data:product});
+    }catch(error){
+        res.status(400).json({status:"fail",error:error.message});
+    }
+}
+
 module.exports = productController;
