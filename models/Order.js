@@ -6,10 +6,10 @@ const orderSchema = Schema({
     shipTo:{type:Object, required:true},
     contact:{type:Object, required:true},
     totalPrice:{type:Number, required:true, default:0},
-    userId:{type:monggose.ObjdectId, ref:User},
+    userId:{type:monggose.Schema.Types.ObjectId, ref:User},
     status:{type:String, default:"preparing"},
     items:[{
-        productId:{type:monggose.ObjectId, ref:Product},
+        productId:{type:monggose.Schema.Types.ObjectId, ref:Product},
         qty:{type:Number, required:true, default:1},
         size:{type:String, required:true},
         price:{type:Number, required:true}

@@ -3,9 +3,9 @@ const User = require("./User");
 const Product = require("./Product");
 const Schema = monggose.Schema;
 const cartSchema = Schema({
-    userId:{type:monggose.ObjectId, ref:User},
+    userId:{type:monggose.Schema.Types.ObjectId, ref:User},
     items:[{
-        productId:{type:monggose.ObjectId, ref:Product},
+        productId:{type:monggose.Schema.Types.ObjectId, ref:Product},
         size:{type:String, required:true},
         qty:{type:Number, default:1, required:true}
     }]
