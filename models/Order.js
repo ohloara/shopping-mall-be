@@ -17,13 +17,12 @@ const orderSchema = Schema({
         price:{type:Number, required:true}
     }]
 
-},{timestamp:true});
+},{timestamps:true});
 
 orderSchema.method.toJSON = function(){
     const obj = this._doc;
     delete obj.__v;
     delete obj.updateAt;
-    delete obj.createAt;
     return obj;
 };
 
