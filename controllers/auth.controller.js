@@ -1,9 +1,11 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const {OAuth2Client} = require('google-auth-library');
 const { response } = require("express");
 require("dotenv").config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const GOOGLE_CLIENT_ID=process.env.GOOGLE_CLIENT_ID;
 
 const authController = {};
 
@@ -24,6 +26,35 @@ authController.loginWithEmail = async(req,res)=>{
     }
 }
 
+authController.loginWithGoogle = async (req, res) =>{
+    try{
+        const {token} = req.body;
+        const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+        const ticket = await googleClient.verifyIdToken({
+            idToken: token,
+            audience: GOOGLE_CLIENT_ID
+        });
+        const {email, name} = ticket.getPayload();
+        let user = await User.findOne({email});
+        if(!user){
+            const randomPassword = ""+Math.floor(MAth.random()*1000000000);
+            const salt = await bcrypt.genSalt(10);
+            const newPassword = await bcrypt.hash(randomPassword,salt);
+            user = new User({
+                name,
+                email,
+                password:newPassword
+            });
+            await user.save();
+
+            const sessionToken = await user.generateToken;
+            res.satus(200).json({status:"success", user, token:sessionToken});
+        }
+    }catch(error){
+        res.satus(400).json({status:"fail", error:error.message});
+    }
+}
+
 authController.authenticate = async (req, res, next)=>{
     try{
         const tokenString = req.headers.authorization;
@@ -38,6 +69,7 @@ authController.authenticate = async (req, res, next)=>{
         res.status(400).json({status:"error", error:error.message});
     }
 }
+
 authController.checkAdminPermission = async (req, res, next)=>{
     try{
         
